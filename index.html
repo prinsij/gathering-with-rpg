@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gathering com RPG: Criando aventuras aleatórias com Magic: The Gathering</title>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/javascript" src="js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/cultures/pt-BR.js"></script>
+    <script type="text/javascript" src="js/cultures/en-US.js"></script>
+    <script type="text/javascript" src="js/culture-helper.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</head>
+<body>
+
+    <div class="container">
+    <div class="setup-bar"> <div class="share-buttons">
+			            <a href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Frpg.uece.net&t=RPG%20com%20Magic%3A%20Criando%20aventuras%20aleat%C3%B3rias%20com%20Magic%3A%20The%20Gathering" target="_blank"><img src="images/facebook.png" /></a>
+			            <a href="https://plusone.google.com/_/+1/confirm?hl=en&url=http%3A%2F%2Frpg.uece.net" target="_blank"><img src="images/googleplus.png" /></a>
+			            <a href="http://twitter.com/share?url=http%3A%2F%2Frpg.uece.net&text=RPG%20com%20Magic%3A%20Criando%20aventuras%20aleat%C3%B3rias%20com%20Magic%3A%20The%20Gathering" target="_blank"><img src="images/twitter.png" /></a>
+				        </div>
+				        <div class="dropdown dropdown-languages">
+                          <input type="button" class="btn btn-default how-to" data-toggle="modal" data-target="#help-dialog" value="Como Utilizar" />
+						  <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-languages" data-toggle="dropdown" aria-expanded="true">
+						    Idioma
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-languages">
+						    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="culture-pt" data-value="pt-BR">Portugês (Brasil)</a></li>
+						    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="culture-en" data-value="en-US">Inglês (Estados Unidos)</a></li>
+						  </ul>
+						</div></div>
+        <h1 class="main-title">Gathering com RPG</h1>
+        <h4 class="sub-title">Criando aventuras aleatórias com Magic: The Gathering &copy;</h4>
+       
+        <br>
+        <div>
+            <div class="modal fade bs-example-modal-sm loading" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-sm">
+                <div class="modal-content loading-dialog">
+                  Carregando banco de dados de cartas, por favor aguarde...
+                </div>
+              </div>
+            </div>
+            <form class="form-horizontal" role="form ">
+                <div class="main-buttons">
+                    <input type="button" data-bind="click: loadValues" class="btn btn-lg btn-primary new-adventure" value="Gerar Nova Aventura" />
+                    <a target="_blank" id="adventure" title="Favorite este link para salvar a aventura gerada."
+                       class="btn btn-lg btn-primary bookmark-adventure hidden"></a>
+
+	                </div>
+                <div class="from-group">
+                    <br><br>
+                    <div class="conjunto">
+                        <div class="cartas">
+                            <b class="card-problem">O Problema</b>
+                            <img id="problema" data-bind="attr : {src: problema}, event: {click: loadProblema}" />
+                            <em class="card-problem-description">Esse é o problema que sempre rondou a região, mas só agora se tornou sério o suficiente. Ou algum evento misterioso que surgiu do nada.</em>
+                        </div>
+                        <div class="cartas">
+                            <b class="card-scenario">O Cenário </b><img id="cenario" data-bind="attr : {src: cenario}, event: {click: loadCenario}" />
+                            <em class="card-scenario-description">É aqui onde tudo ocorre.</em>
+                        </div>
+                        <div class="cartas">
+                            <b class="card-solution">A Solução </b><img id="solucao" data-bind="attr : {src: solucao}, event: {click: loadSolucao}" />
+                            <em class="card-solution-description">Isso pode ser considerado "tirar o coelho da cartola" ou meio que um Deus Ex Machina. O grupo poderia resolver o problema sozinho, mas isso não seria tão divertido, né?</em>
+                        </div>
+                        <div class="cartas">
+                            <b class="card-ally">O Ajudante </b><img id="ajudante" data-bind="attr : {src: ajudante}, event: {click: loadAjudante}" />
+                            <em class="card-ally-description">Representa alguém que quer que o problema seja solucionado/removido do cenário.</em>
+                        </div>
+                        <div class="cartas">
+                            <b class="card-enemy">O Antagonista </b><img id="antagonista" data-bind="attr : {src: antagonista}, event: {click: loadAntagonista}" />
+                            <em class="card-enemy-description">Representa alguém que quer que o problema não seja solucionado/removido do cenário.</em>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="help-dialog" tabindex="-1" role="dialog" aria-labelledby="help-dialog-label" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title help-dialog-label" id="help-dialog-label">Como utilizar</h4>
+              </div>
+              <div class="modal-body help">
+                ...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fb-comments" data-href="http://rpg.uece.net/" data-numposts="5" data-colorscheme="dark"></div>
+        <div class="footer">
+            <div class="container disclaimer">                
+            </div>
+        </div>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'rpguecenet'; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+</body>
+</html>
