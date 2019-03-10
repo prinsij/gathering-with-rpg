@@ -100,8 +100,8 @@ function _loadStaticHtmlContent__EN(version) {
 </p>
 <p><b>An example below:</b></p>
 <p> [The Problem]: <a href="https://scryfall.com/card/pwp11/76/tormented-soul" target="_blank">Tormented Soul</a> </p>
-<p> [The Scenario]:<a href="https://scryfall.com/card/cm2/258/murmuring-bosk" target="_blank">Murmuring Bosk</a> </p>
-<p> [The Solution] :<a href="https://scryfall.com/card/mps/17/mana-vault" target="_blank">Mana Vault</a> </p>
+<p> [The Scenario]: <a href="https://scryfall.com/card/cm2/258/murmuring-bosk" target="_blank">Murmuring Bosk</a> </p>
+<p> [The Solution]: <a href="https://scryfall.com/card/mps/17/mana-vault" target="_blank">Mana Vault</a> </p>
 <p> [The Ally]: <a href="https://scryfall.com/card/inv/204/quirion-sentinel" target="_blank"> Quirion Sentinel </a> </p>
 <p>[The Enemy]: <a href="https://scryfall.com/card/bbd/174/earth-elemental" target="_blank">Earth Elemental</a> </p>
 <i>
