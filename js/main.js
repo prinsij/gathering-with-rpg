@@ -3,7 +3,6 @@
 //$.widget.bridge('jqtooltip', $.ui.tooltip);
 
 // global variables
-var loadingDialog;
 var helpDialog;
 var allCards;
 var pro = getQueryVariable("p"); // problema
@@ -16,18 +15,11 @@ var Adventure;
 // Inicializacao de todo o corpo da página separadamente por funcao
 $(function(){
     initializeDropDownCultures();
-    initializeStartDialogs();
     initializeAdventureGeneration();
     initializeViewModel();
-    initializeAllCards();
+    var aventura = new Adventure();
+    ko.applyBindings(aventura);
 });
-
-function initializeStartDialogs(){
-    loadingDialog = $(".loading").modal({
-        keyboard: false,
-        backdrop: false
-    });
-}
 
 function initializeAdventureGeneration(){
     if (pro && cen && sol && aju && ant) {
@@ -41,8 +33,23 @@ function cardHasType(card, type) {
     return card.type_line.indexOf(type) > -1;
 }
 
-function randomCard() {
-    return allCards[Math.floor(Math.random()*allCards.length)];
+function randomCard(yesTypes, noTypes, callback) {
+    // %3A == ':'
+    var typesStr = '';
+    for (let type of yesTypes) {
+        typesStr += '+type%3A' + type;
+    }
+    for (let type of noTypes) {
+        typesStr == '+-type%3A' + type;
+    }
+    $.ajax({
+        //   -is:funny t:type
+        url: 'https://api.scryfall.com/cards/random?q=-is%3Afunny' + typesStr,
+        type: 'GET',
+        crossDomain: true,
+        dataType: 'json',
+        success: callback,
+    });
 }
 
 function getCardImage(card) {
@@ -59,78 +66,55 @@ function initializeViewModel(){
         self.solucao = sol ? ko.observable(String.format("http://api.mtgdb.info/content/hi_res_card_images/{0}.jpg", sol)) : ko.observable();
         self.ajudante = aju ? ko.observable(String.format("http://api.mtgdb.info/content/hi_res_card_images/{0}.jpg", aju)) : ko.observable();
         self.antagonista = ant ? ko.observable(String.format("http://api.mtgdb.info/content/hi_res_card_images/{0}.jpg", ant)) : ko.observable();
-        self.countAll = ko.observable();
 
         self.loadProblema = function(){
             self.problema("");
-            // Gerar o problema (Carta de Criatura ou Encanto)
-            while(self.problema().length == 0){ 
-                var maCard = randomCard();
-                if (!cardHasType(maCard, "Creature") && !cardHasType(maCard, "Enchantment")) {
-                    continue;
-                } else {
-                    pro = maCard.id;
-                    self.problema(getCardImage(maCard));
-                    generateAdventureLink(pro, cen, sol, aju, ant);
-                }
-            }
+            // Creature || Enchantment
+            randomCard(['Creature', 'Enchantment'], [], function(maCard) {
+                pro = maCard.id;
+                self.problema(getCardImage(maCard));
+                generateAdventureLink(pro, cen, sol, aju, ant);
+            });
         };
 
         self.loadCenario = function(){
             self.cenario("");
-            // Gerar o cenario (Carta de Terreno não-básico)
-            while(self.cenario().length == 0){ 
-                var maCard = randomCard();
-                
-                if (cardHasType(maCard, "Basic")) continue;
-                if (!cardHasType(maCard, "Land")) continue;
-                
+            // Non-basic land
+            randomCard(['Land'], ['Basic'], function(maCard) {
                 cen = maCard.id;
                 self.cenario(getCardImage(maCard));
                 generateAdventureLink(pro, cen, sol, aju, ant);
-            };
+            });
         };
 
         self.loadSolucao = function(){
             self.solucao("");
-            // Gerar a solucao (Carta de Artefato ou Feitiço)
-            while(self.solucao().length == 0){ 
-                var maCard = randomCard();
-
-                if (!cardHasType(maCard, "Sorcery") && !cardHasType(maCard, "Artifact")) continue;
-                
+            // Sorcery or Artifact
+            randomCard(['Sorcery', 'Artifact'], [], function(maCard) {
                 sol = maCard.id;
                 self.solucao(getCardImage(maCard));
                 generateAdventureLink(pro, cen, sol, aju, ant);
-            };
+            });
         };
 
         self.loadAjudante = function(){
             self.ajudante("");
-            // Gerar o ajudante (Carta de Criatura)
-            while(self.ajudante().length == 0){ 
-                var maCard = randomCard();
-
-                if (!cardHasType(maCard, "Creature")) continue;
-
+            // Creature
+            randomCard(['Creature'], [], function(maCard) {
                 aju = maCard.id;
                 self.ajudante(getCardImage(maCard));
                 generateAdventureLink(pro, cen, sol, aju, ant);
-            };
+            });
         };
 
         self.loadAntagonista = function(){
             self.antagonista("");
-            // Gerar o antagonista (Carta de Criatura)
-            while(self.antagonista().length == 0){ 
-                var maCard = randomCard();
-
-                if (!cardHasType(maCard, "Creature")) continue;
-
+            // Creature
+            randomCard(['Creature'], [], function(maCard) {
                 ant = maCard.id;
                 self.antagonista(getCardImage(maCard));
                 generateAdventureLink(pro, cen, sol, aju, ant);
-            };
+            });
 
         };
 
@@ -143,30 +127,6 @@ function initializeViewModel(){
         };
 
     }
-}
-
-function initializeAllCards(){
-    $.ajax({
-            //url: "https://api.mtgdb.info/cards/?fields=id,type,cardSetName",
-            //   "https://api.scryfall.com/cards/search?q=-is:funny",
-            url: "https://api.scryfall.com/cards/search?q=-is%3Afunny",
-            type: 'GET',
-            crossDomain: true,
-            dataType: 'json',
-            success: function(data){
-                allCards = data.data;
-
-                var aventura = new Adventure();
-                aventura.countAll(allCards.length);
-
-                ko.applyBindings(aventura);
-            },
-            complete: function(){
-            // Hack to close a static bootstrap modal. http://stackoverflow.com/a/11081574
-            loadingDialog.modal('show');
-            loadingDialog.modal('hide');
-            }
-    });
 }
 
 function generateAdventureLink(pro, cen, sol, aju, ant){
