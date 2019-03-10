@@ -4,7 +4,6 @@
 
 // global variables
 var helpDialog;
-var allCards;
 var pro = getQueryVariable("p"); // problema
 var cen = getQueryVariable("c"); // cenário
 var sol = getQueryVariable("s"); // solucao
@@ -50,9 +49,9 @@ function scryfallRateLimit(callback) {
     var now = new Date().getTime();
     if (now < scryfallRateLimit.newReqWindow) {
         window.setTimeout(callback, scryfallRateLimit.newReqWindow - now);
-        scryfallRateLimit.newReqWindow += 100;
+        scryfallRateLimit.newReqWindow += 200;
     } else {
-        scryfallRateLimit.newReqWindow = now + 100;
+        scryfallRateLimit.newReqWindow = now + 200;
         callback();
     }
 }
