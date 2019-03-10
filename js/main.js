@@ -33,10 +33,15 @@ function cardHasType(card, type) {
 }
 
 function randomCard(queryStr, callback) {
+    // Allow unstable, heroes of the realm, and holiday cards, but no other silver border cards
+    // We don't just explicitly disallow unglued/unhinged bc of promos and such
+    // Unstable's flavor is generally less 4th-wally and while goofy can actually work
+    var noFunny = '(set:unstable OR set:HTR OR set:HTR17 OR set:"Happy Holidays" OR -is:funny)';
     scryfallRateLimit(function () {
         $.ajax({
-            //   -is:funny t:type
-            url: 'https://api.scryfall.com/cards/random?q=' + encodeURIComponent('-is:funny ' + queryStr),
+            // We need to wrap the query in quotes because the OR operator
+            // binds less tightly than the implicit AND of space separated parameters
+            url: 'https://api.scryfall.com/cards/random?q=' + encodeURIComponent(`(${noFunny}) (${queryStr})`),
             type: 'GET',
             crossDomain: true,
             dataType: 'json',
